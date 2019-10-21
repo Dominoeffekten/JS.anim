@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JS.Anim.N1</title>
+    <script src="object.js"></script>
+</head>
+<body>
+
+        <section>
+                <canvas id='canvas' width='500' height='600'> </canvas>
+        </section>
+    
+
+
+<script>
+'use strict';
+var $ = function (foo) {
+    return document.getElementById(foo);    // save keystrokes
+}
+
+//Random color
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+/**
+ * Umo object, version 0.9
+ */
+ let Umo = {
+    init(canvas, color) {
+        this.canvas = canvas;
+        this.x = Math.random() * this.canvas.getWidth();
+        this.y = Math.random() * this.canvas.getHeight();
+        this.r = Math.random() * 9 + 3;
+        this.dx = Math.random() * 5;
+        this.dy = Math.random() * 5;
+        this.color = color;
+    },
+
+    draw() {
+        this.canvas.getContext().beginPath();
+        this.canvas.getContext().fillStyle = this.color;
+        this.canvas.getContext().arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        this.canvas.getContext().fill();
+        this.canvas.getContext().closePath();
+    },
+
+    move() {
+        //Bevæger sig
+        if (this.x + this.dx > this.canvas.getWidth() || this.x + this.dx < 0)
+              this.dx = -this.dx;
+        if (this.y + this.dy > this.canvas.getHeight() || this.y + this.dy < 0)
+              this.dy = -this.dy;
+
+        this.x += this.dx;
+        this.y += this.dy;
+
+        //Testen hvor de rammer hinanden
+        for(let j = 0; j < shapes.length; j++){
+            if (this === shapes[j]){
+                continue;
+            } else{
+                this.hitTest(shapes[j]);
+            }
+        }
+    },
+    grow() {
+        //let areal = Math.PI * (this.r)^2;
+    },
+    hitTest(obj){ //Rammer den?
+        let rum = Math.sqrt(Math.pow(this.x - obj.x, 2) + Math.pow(this.y - this.y, 2));
+        console.log(rum);
+
+        if(rum <= this.r + this.r){
+            console.log('2 '+ rum);
+        }
+    },
+
+    toString() {
+        s = '';
+        s += this.x + ':' + this.y + ', ' + this.r + " \n " + this.color;
+        console.log(s);
+    }
+};
+
+Umo.hitTest();
+
+//laver forskellige farver
+function randomNumber(){
+    Math.floor(Math.random() * 100);
+}
+
+//tegner dem
+var redraw = function () {
+    canvas.clear();     // clear canvas
+    canvas.prep();      // prep canvas with background color
+    for (let umo of shapes) {
+        umo.move();  // change coordinates
+        umo.draw();  // draw again with new coordinates
+    }
+};
+
+var repeater = function () {
+    setInterval(redraw, 10);
+};
+
+
+//laver cirklerne
+var initialize = function () {
+    canvas = Object.create(Canvas);
+    canvas.init('canvas', '#F3F6FE');//transparent
+    
+    let c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+    
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+    
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+    
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+    
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+
+    c0 = Object.create(Umo);
+    c0.init(canvas, getRandomColor());
+    shapes.push(c0);
+
+    repeater();
+};
+
+
+
+var shapes = [];
+var canvas;
+
+
+var nml = window.addEventListener('load', initialize, false);
+        
+    
+    
+</script>
+</body>
+</html>
