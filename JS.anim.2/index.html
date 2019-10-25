@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>JS.Anim.N1</title>
+    <title>JS.Anim.N3</title>
     <script src="object.js"></script>
 </head>
 <body>
@@ -31,7 +31,9 @@ function getRandomColor() {
     return color;
 }
 
-//Objekter
+/**
+ * Umo object, version 0.9
+ */
  let Umo = {
     init(canvas, color) {
         this.canvas = canvas;
@@ -42,16 +44,15 @@ function getRandomColor() {
         this.dy = Math.random() * 5;
         this.color = color;
     },
-
     firkant(canvas, color) {
         this.canvas = canvas;
         this.x = Math.random() * this.canvas.getWidth();
         this.y = Math.random() * this.canvas.getHeight();
-        this.w = 20;
-        this.h = 20;
-        this.fr = Math.sqrt(Math.pow(this.w, 2) + Math.pow(this.h, 2));
+        this.w = Math.random() * 60;
+        this.h = Math.random() * 60;
         this.dx = Math.random() * 5;
         this.dy = Math.random() * 5;
+        this.fr = Math.sqrt(Math.pow(this.w, 2) + Math.pow(this.h, 2));
         this.color = color;
     },
 
@@ -60,41 +61,26 @@ function getRandomColor() {
         this.canvas.getContext().fillStyle = this.color;
         this.canvas.getContext().arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
         this.canvas.getContext().fillRect(this.x, this.y, this.w, this.h);
+        this.canvas.getContext().strokeStyle = "#000";
+        this.canvas.getContext().lineWidth = 1;
+        this.canvas.getContext().strokeRect(this.x, this.y, this.w, this.h);
+        this.canvas.getContext().stroke();
         this.canvas.getContext().fill();
         this.canvas.getContext().closePath();
     },
+    clear() {
+        this.canvas.getContext().clearRect(0, 0, canvas.width, canvas.height);
+    },
+    move() {
+        //bolde bevæger sig
+        if (this.x + this.dx > this.canvas.getWidth() || this.x + this.dx < 0 || this.x + this.w > this.canvas.getWidth() )
+              this.dx = -this.dx;
+        if (this.y + this.dy > this.canvas.getHeight() || this.y + this.dy < 0 || this.y + this.h > this.canvas.getHeight() )
+              this.dy = -this.dy;
 
-    move() {//Bevæger sig
-        
-        for (let j = 0; j < shapes.length; j++){
-            if(shapes[j].r){ //Rammer den en cirkel
-                //ounce
-                if (this.x + this.dx > this.canvas.getWidth() || this.x + this.dx < 0)
-                    this.dx = -this.dx;
-                if (this.y + this.dy > this.canvas.getHeight() || this.y + this.dy < 0)
-                    this.dy = -this.dy;
+        this.x += this.dx;
+        this.y += this.dy;
 
-                } else { //Rammer den kanten, skal den skubbes væk
-                    if(shapes[j].x + shapes[j].w > this.canvas.getWidth()) {
-                        //bounce
-                        let dis = shapes[j].x + shapes[j].w;
-                        let newDis = dis - this.canvas.getWidth();
-                        shapes[j].x = shapes[j].x - newDis;
-                        this.dx = -this.dx;
-                    }
-                    if(shapes[j].y + shapes[j].h > this.canvas.getHeight()) {
-                        //bounce
-                        let dis = shapes[j].y + shapes[j].h;
-                        let newDis = dis - this.canvas.getHeight();
-                        shapes[j].y = shapes[j].y - newDis;
-                        this.dy = -this.dy;
-                    }
-                }
-                this.x += this.dx;
-                this.y += this.dy;
-            }
-        
-      
         //Testen hvor de rammer hinanden
         for (let j = 0; j < shapes.length; j++){
             if (this === shapes[j]) {
@@ -122,15 +108,10 @@ function getRandomColor() {
         }
     },
     grow() {
-        for (let j = 0; j < shapes.length; j++){
-            if(shapes[j].r){ //cirkel
-                return Math.PI * this.r * this.r;
-            } else { //firkant
-                return Math.PI * this.fr * this.fr;
-            }
-        }
+        return Math.PI * this.r * this.r;
+        
     },
-    hitTest(obj){ //Rammer den?
+    hitTest(obj, j){ //Rammer den?
         let rum = Math.sqrt(Math.pow(this.x - obj.x, 2) + Math.pow(this.y - obj.y, 2));
 
         if(rum <= this.r + obj.r){
@@ -158,7 +139,7 @@ var redraw = function () {
 };
 
 var repeater = function () {
-    setInterval(redraw, 100);
+    setInterval(redraw, 20);
 };
 
 
@@ -166,16 +147,16 @@ var repeater = function () {
 var initialize = function () {
     canvas = Object.create(Canvas);
     canvas.init('canvas', '#F3F6FE');//transparent
-
-    //cirkel
+    
+    //cirkler
     let c0 = Object.create(Umo);
     c0.init(canvas, getRandomColor());
     shapes.push(c0);
-
+    
     c0 = Object.create(Umo);
     c0.init(canvas, getRandomColor());
     shapes.push(c0);
-
+    
     c0 = Object.create(Umo);
     c0.init(canvas, getRandomColor());
     shapes.push(c0);
@@ -208,6 +189,7 @@ var initialize = function () {
     c1 = Object.create(Umo);
     c1.firkant(canvas, getRandomColor());
     shapes.push(c1);
+    
 
     repeater();
 };
@@ -216,6 +198,7 @@ var initialize = function () {
 
 var shapes = [];
 var canvas;
+var obj;
 
 
 var nml = window.addEventListener('load', initialize, false);

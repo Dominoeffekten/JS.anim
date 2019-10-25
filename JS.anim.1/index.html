@@ -49,6 +49,9 @@ function getRandomColor() {
         this.canvas.getContext().beginPath();
         this.canvas.getContext().fillStyle = this.color;
         this.canvas.getContext().arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        this.canvas.getContext().strokeStyle = "#000";
+        this.canvas.getContext().lineWidth = 1;
+        this.canvas.getContext().stroke();
         this.canvas.getContext().fill();
         this.canvas.getContext().closePath();
     },
