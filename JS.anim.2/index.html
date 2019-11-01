@@ -133,45 +133,45 @@ function getRandomColor() {
                     }
                 }
             }
-            //Spiser hinanden - alle
-            for (let j = 0; j < shapes.length; j++){
-                if (this === shapes[j]) {
-                    continue;
-                } else {
-                    if (this.hitTestAll(shapes[j])) {
-                        if(this.fr >= shapes[j].r){ //Er firkant størst?
-                            console.log(this.fr + ' er størst ' );
-
-                            let a1 = this.growFirkant();
-                            let a2 = shapes[j].grow();
-                            a1 += a2;
-                            a1 += Math.PI;
-                            a1 = Math.sqrt(a1);
-                            if (this.fr >= shapes[j].r) {
-                                this.w = a1 + shapes[j].r;
-                                this.h = this.w;
-                                this.fr = (a1 + shapes[j].r) /2;
-                                shapes.splice(j, 1);
-                            } else { 
-                                shapes[j].w = a1;
-                            }
-                        } if(this.r >= shapes[j].fr){//Er cirkel størst?
-                            let a1 = this.grow();
-                            let a2 = shapes[j].grow();
-                            a1 += a2;
-                            a1 /= Math.PI;
-                            a1 = Math.sqrt(a1);
-                            if (this.r >= shapes[j].fr) { //er radius større eller lig med, så skal de spises
-                                this.r = shapes[j].fr;
-                                shapes.splice(j, 1);
-                            }else { 
-                                shapes[j].w = a1;
-                            }
+        }
+        //Spiser hinanden - alle
+        for (let j = 0; j < shapes.length; j++){
+            if (this === shapes[j]) {
+                continue;
+            } else {
+                if (this.hitTestAll(shapes[j])) {
+                    if(this.fr >= shapes[j].r){ //Er firkant størst?
+                        console.log(this.fr + ' er størst ' );
+                        let a1 = this.growFirkant();
+                        let a2 = shapes[j].grow();
+                        a1 += a2;
+                        a1 += Math.PI;
+                        a1 = Math.sqrt(a1);
+                        if (this.fr >= shapes[j].r) {
+                            this.w = a1 + shapes[j].r;
+                            this.h = this.w;
+                            this.fr = (a1 + shapes[j].r) /2;
+                            shapes.splice(j, 1);
+                        } else { 
+                            shapes[j].w = a1;
                         }
-                    } 
-                }
+                    } if(this.r >= shapes[j].fr){//Er cirkel størst?
+                        let a1 = this.grow();
+                        let a2 = shapes[j].grow();
+                        a1 += a2;
+                        a1 /= Math.PI;
+                        a1 = Math.sqrt(a1);
+                        if (this.r >= shapes[j].fr) { //er radius større eller lig med, så skal de spises
+                            this.r = shapes[j].fr;
+                            shapes.splice(j, 1);
+                        }else { 
+                                shapes[j].w = a1;
+                        }
+                    }
+                } 
             }
-        }if (shapes.length === 1) {
+        }
+        if (shapes.length === 1) {
             //clearInterval(onoff);
             this.clear();
             window.alert('Alle bolde er nu spist');
