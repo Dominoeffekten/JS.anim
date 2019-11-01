@@ -49,10 +49,10 @@ function getRandomColor() {
         this.x = Math.random() * this.canvas.getWidth();
         this.y = Math.random() * this.canvas.getHeight();
         this.w = Math.random() * 60;
-        this.h = Math.random() * 60;
+        this.h = this.w;
         this.dx = Math.random() * 5;
         this.dy = Math.random() * 5;
-        this.fr = Math.sqrt(Math.pow(this.w, 2) + Math.pow(this.h, 2));
+        this.fr = Math.sqrt(Math.pow(this.w, 2) + Math.pow(this.w, 2))/2.9;
         this.color = color;
     },
 
@@ -68,6 +68,15 @@ function getRandomColor() {
         this.canvas.getContext().fill();
         this.canvas.getContext().closePath();
     },
+
+    drawFirkant(){ //usynlig cirkel
+        this.canvas.getContext().beginPath();
+        this.canvas.getContext().arc(this.x + this.fr, this.y + this.fr, this.fr, 0, Math.PI * 2, false);
+        this.canvas.getContext().strokeStyle = this.color;
+        this.canvas.getContext().lineWidth = 1;
+        this.canvas.getContext().stroke();
+        this.canvas.getContext().closePath();
+    },
     clear() {
         this.canvas.getContext().clearRect(0, 0, canvas.width, canvas.height);
     },
@@ -81,7 +90,8 @@ function getRandomColor() {
         this.x += this.dx;
         this.y += this.dy;
 
-        //Testen hvor de rammer hinanden
+        
+        //Spiser hinanden - cirkel
         for (let j = 0; j < shapes.length; j++){
             if (this === shapes[j]) {
                 continue;
@@ -101,24 +111,103 @@ function getRandomColor() {
                 }
             }
         }
-        if (shapes.length === 1) {
+        
+        //Spiser hinanden - firkant
+        for (let j = 0; j < shapes.length; j++){
+            if (this === shapes[j]) {
+                continue;
+            } else {
+                if (this.hitTestFirkant(shapes[j])) { 
+                    let a1 = this.growFirkant();
+                    let a2 = shapes[j].growFirkant();
+                    a1 += a2;
+                    a1 += Math.PI;
+                    a1 = Math.sqrt(a1);
+                    if (this.fr >= shapes[j].fr) {
+                        this.w = a1;
+                        this.h = this.w;
+                        this.fr = a1 /2;
+                        shapes.splice(j, 1);
+                    } else { 
+                        shapes[j].w = a1;
+                    }
+                }
+            }
+            //Spiser hinanden - alle
+            for (let j = 0; j < shapes.length; j++){
+                if (this === shapes[j]) {
+                    continue;
+                } else {
+                    if (this.hitTestAll(shapes[j])) {
+                        if(this.fr >= shapes[j].r){ //Er firkant størst?
+                            console.log(this.fr + ' er størst ' );
+
+                            let a1 = this.growFirkant();
+                            let a2 = shapes[j].grow();
+                            a1 += a2;
+                            a1 += Math.PI;
+                            a1 = Math.sqrt(a1);
+                            if (this.fr >= shapes[j].r) {
+                                this.w = a1 + shapes[j].r;
+                                this.h = this.w;
+                                this.fr = (a1 + shapes[j].r) /2;
+                                shapes.splice(j, 1);
+                            } else { 
+                                shapes[j].w = a1;
+                            }
+                        } if(this.r >= shapes[j].fr){//Er cirkel størst?
+                            let a1 = this.grow();
+                            let a2 = shapes[j].grow();
+                            a1 += a2;
+                            a1 /= Math.PI;
+                            a1 = Math.sqrt(a1);
+                            if (this.r >= shapes[j].fr) { //er radius større eller lig med, så skal de spises
+                                this.r = shapes[j].fr;
+                                shapes.splice(j, 1);
+                            }else { 
+                                shapes[j].w = a1;
+                            }
+                        }
+                    } 
+                }
+            }
+        }if (shapes.length === 1) {
             //clearInterval(onoff);
             this.clear();
             window.alert('Alle bolde er nu spist');
         }
     },
     grow() {
-        return Math.PI * this.r * this.r;
-        
+        return Math.PI * this.r * this.r;  
     },
-    hitTest(obj, j){ //Rammer den?
+    growFirkant() {
+        return this.w * this.w;  
+    },
+    hitTest(obj){ //Rammer den?
         let rum = Math.sqrt(Math.pow(this.x - obj.x, 2) + Math.pow(this.y - obj.y, 2));
-
-        if(rum <= this.r + obj.r){
+        if(rum <= this.r + obj.r){ //cirklerne rammer cirklerne 
             return true;
         }else{
             return false;
         }
+
+    },
+    hitTestFirkant(obj){ //Rammer den firkant?
+        let rum2 = Math.sqrt(Math.pow(this.x - obj.x, 2) + Math.pow(this.y - obj.y, 2));
+        if(rum2 <= this.fr + obj.fr){ // firkanterne rammer kanterne 
+            return true;
+        }else{
+            return false;
+        }
+    },
+    hitTestAll(obj){ //Rammer firkant og cirkel hinanden?
+        let rum = Math.sqrt(Math.pow(this.x - obj.x, 2) + Math.pow(this.y - obj.y, 2));
+        if(rum <= this.fr + obj.r ){ 
+            return true;
+        }else{
+            return false;
+        }
+
     },
 
     toString() {
@@ -135,6 +224,8 @@ var redraw = function () {
     for (let umo of shapes) {
         umo.move();  // change coordinates
         umo.draw();  // draw again with new coordinates
+        umo.drawFirkant();
+
     }
 };
 
